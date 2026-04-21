@@ -4,6 +4,7 @@ from monitor.models import Event, AIUsage
 from monitor.services.ai_service import track_ai_success, track_ai_failure
 from monitor.services.report_service import generate_daily_report
 from monitor.services.email_service import send_email_report
+from monitor.services.metrics_service import get_dashboard_metrics
 
 app = Flask(__name__)
 
@@ -125,3 +126,9 @@ def send_test_report():
             "report": report_data,
         }
     ), (200 if email_sent else 500)
+
+
+@app.route("/dashboard-metrics", methods=["GET"])
+def dashboard_metrics():
+    metrics = get_dashboard_metrics()
+    return jsonify(metrics), 200

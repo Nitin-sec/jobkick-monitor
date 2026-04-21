@@ -19,11 +19,27 @@ def send_email_report(report_data):
         message["To"] = receiver
         message["Subject"] = "Jobkick Daily Report"
 
+        ai_metrics = report_data.get("ai_metrics", {})
+        user_metrics = report_data.get("user_metrics", {})
+        jobs_sent_per_user = user_metrics.get("jobs_sent_per_user", [])
+
+        top_users_lines = []
+        for user_data in jobs_sent_per_user[:5]:
+            user_id = user_data.get("user_id")
+            jobs_sent = user_data.get("jobs_sent", 0)
+            top_users_lines.append(f"User {user_id} -> {jobs_sent} jobs")
+
+        top_users_text = "\n".join(top_users_lines) if top_users_lines else "No user job data available."
+
         body = (
-            f"Total Events: {report_data.get('total_events', 0)}\n"
-            f"AI Requests: {report_data.get('ai_requests', 0)}\n"
-            f"Total Tokens: {report_data.get('total_tokens', 0)}\n"
-            f"Total Cost: ${float(report_data.get('total_cost', 0.0)):.6f}\n"
+            "=== Jobkick Daily Report ===\n\n"
+            f"AI Calls: {ai_metrics.get('total_calls', 0)}\n"
+            f"Success: {ai_metrics.get('success_calls', 0)}\n"
+            f"Failed: {ai_metrics.get('failed_calls', 0)}\n"
+            f"Total Tokens: {ai_metrics.get('total_tokens', 0)}\n"
+            f"Total Cost: ${float(ai_metrics.get('total_cost', 0.0)):.6f}\n\n"
+            "Top Users:\n"
+            f"{top_users_text}\n"
         )
         message.attach(MIMEText(body, "plain"))
 
