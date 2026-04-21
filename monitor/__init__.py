@@ -1,0 +1,2 @@
+"""Jobkick monitor package."""
+

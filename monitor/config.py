@@ -3,9 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class config:
+class Config:
     DB_HOST = os.getenv("DB_HOST", "localhost")
-    DB_PORT = os.getenv("DB_PORT", "3306")
+    DB_PORT = int(os.getenv("DB_PORT", "3306"))
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "password")
     DB_NAME = os.getenv("DB_NAME", "jobease")
+    DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    HOST = os.getenv("FLASK_HOST", "0.0.0.0")
+    APP_PORT = int(os.getenv("FLASK_PORT", "5000"))

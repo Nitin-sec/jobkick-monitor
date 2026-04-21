@@ -14,8 +14,10 @@ def log_event(event_type, user_id=None, session_id=None, service_name=None, even
         )
         db.add(event)
         db.commit()
+        return event.id
     except Exception as e:
         db.rollback()
-        print("Logging error:", e)
+        print(f"Logging error: {e}")
+        return None
     finally:
-        db.close()
+        SessionLocal.remove()
