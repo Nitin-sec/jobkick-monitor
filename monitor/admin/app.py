@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from monitor.db import SessionLocal
 from monitor.models import Event, AIUsage
 from monitor.services.ai_service import track_ai_success, track_ai_failure
+from monitor.services.report_service import generate_daily_report
+from monitor.services.email_service import send_email_report
 
 app = Flask(__name__)
 
@@ -110,3 +112,16 @@ def get_ai_usage():
         return jsonify({"error": "failed_to_fetch_ai_usage", "detail": str(e)}), 500
     finally:
         SessionLocal.remove()
+
+
+@app.route("/send-test-report", methods=["GET"])
+def send_test_report():
+    report_data = generate_daily_report()
+    email_sent = send_email_report(report_data)
+    return jsonify(
+        {
+            "status": "success" if email_sent else "failed",
+            "email_sent": email_sent,
+            "report": report_data,
+        }
+    ), (200 if email_sent else 500)
